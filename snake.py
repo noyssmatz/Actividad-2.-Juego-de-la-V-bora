@@ -32,6 +32,30 @@ def inside(head):
     "Return True if head inside boundaries."
     return -200 < head.x < 190 and -200 < head.y < 190
 
+def move_food():
+    "Move food randomly one step at a time."
+    direction = randrange(4)
+
+    if direction == 0:
+        x = 10
+        y = 0
+    elif direction == 1:
+        x = -10
+        y = 0
+    elif direction == 2:
+        x = 0
+        y = 10
+    else:
+        x = 0
+        y = -10
+
+    new_food = food.copy()
+    new_food.move(vector(x, y))
+
+    if inside(new_food):
+        food.x = new_food.x
+        food.y = new_food.y
+
 def move():
     "Move snake forward one segment."
     head = snake[-1].copy()
@@ -51,14 +75,23 @@ def move():
     else:
         snake.pop(0)
 
+    # Movimiento aleatorio de la comida sin salirse
+    step_options = [vector(10, 0), vector(-10, 0), vector(0, 10), vector(0, -10), vector(0, 0)]
+    chosen_step = choice(step_options)
+    potential_food = food.copy()
+    potential_food.move(chosen_step)
+    if inside(potential_food):
+        food.move(chosen_step)
+
+    move_food()
+
     clear()
 
     # Dibuja el cuerpo de la víbora con el color aleatorio asignado
     for body in snake:
-        square(body.x, body.y, 9, color_vibora)
+        square(body.x, body.y, 9, 'black')
 
-    # Dibuja la comida con el color aleatorio diferente
-    square(food.x, food.y, 9, color_comida)
+    square(food.x, food.y, 9, 'green')
     update()
     ontimer(move, 100)
 
